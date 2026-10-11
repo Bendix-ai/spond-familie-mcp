@@ -52,3 +52,11 @@ def test_status_without_and_with_token(tmp_path, monkeypatch, capsys):
     assert _run(["status"]) == 0
     out = capsys.readouterr().out
     assert "dager igjen" in out and "R-hemmelig" not in out
+
+
+def test_setup_claude_refuses_ephemeral_uvx_path(tmp_path, monkeypatch, capsys):
+    monkeypatch.setattr(cli, "_executable", lambda: "/Users/x/.cache/uv/archive-v0/abc/bin/spond-familie")
+    cfg = tmp_path / "claude_desktop_config.json"
+    assert _run(["setup-claude", "--config", str(cfg)]) == 1
+    assert not cfg.exists() and "uv tool install" in capsys.readouterr().out
+    assert _run(["setup-claude", "--force", "--config", str(cfg)]) == 0

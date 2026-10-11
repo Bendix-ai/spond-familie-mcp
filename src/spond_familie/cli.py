@@ -90,12 +90,25 @@ def claude_desktop_config_path() -> Path:
 
 
 def _executable() -> str:
+    """Stien Claude skal starte. Følger ikke symlenker: ``~/.local/bin/spond-familie``
+    (fra ``uv tool install``) er stabil på tvers av oppdateringer."""
     found = shutil.which("spond-familie")
-    return str(Path(found).resolve()) if found else str(Path(sys.argv[0]).resolve())
+    return str(Path(found).absolute()) if found else str(Path(sys.argv[0]).absolute())
+
+
+def _is_ephemeral(path: str) -> bool:
+    """``uvx``/cache-stier forsvinner når cachen ryddes, og Claude får da ikke startet serveren."""
+    p = path.replace("\\", "/")
+    return any(m in p for m in ("/archive-v", "/.cache/uv/", "/uv/cache/", "/builds-v"))
 
 
 def cmd_setup_claude(args) -> int:
     exe = _executable()
+    if _is_ephemeral(exe) and not args.force:
+        print(f"✗ spond-familie kjører fra en midlertidig sti ({exe}).")
+        print("  Installer først: uv tool install git+https://github.com/Bendix-ai/spond-familie-mcp")
+        print("  og kjør så: spond-familie setup-claude")
+        return 1
     path = Path(args.config) if args.config else claude_desktop_config_path()
     data = {}
     if path.exists():
@@ -184,6 +197,7 @@ def main(argv: list[str] | None = None) -> None:
     s = sub.add_parser("setup-claude", help="legg spond-familie inn i Claude Desktop")
     s.add_argument("--readonly", action="store_true", help="uten svar/meldinger (bare lesing)")
     s.add_argument("--config", help="annen sti til claude_desktop_config.json")
+    s.add_argument("--force", action="store_true", help="bruk gjeldende sti selv om den ser midlertidig ut")
     s.set_defaults(fn=cmd_setup_claude)
 
     s = sub.add_parser("tool", help="kjør ett verktøy fra terminalen (for feilsøking)")
