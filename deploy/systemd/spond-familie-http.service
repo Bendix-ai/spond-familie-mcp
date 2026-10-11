@@ -1,0 +1,20 @@
+# Linux / Raspberry Pi: spond-familie som HTTP-tjeneste for fjerntilgang.
+#   1. Bytt ut ADRESSE (og bruker/stier om nødvendig).
+#   2. mkdir -p ~/.config/systemd/user && cp deploy/systemd/spond-familie-http.service ~/.config/systemd/user/
+#   3. systemctl --user daemon-reload && systemctl --user enable --now spond-familie-http
+#   4. sudo loginctl enable-linger $USER   # så den kjører uten at du er logget inn
+# Se docs/fjerntilgang.md. Ingen hemmeligheter her.
+[Unit]
+Description=spond-familie (HTTP + OAuth for claude.ai)
+After=network-online.target
+
+[Service]
+ExecStart=%h/.local/bin/spond-familie serve-http --port 8765 --public-url https://ADRESSE
+Environment=SPOND_MCP_READONLY=1
+Environment=PYTHONUNBUFFERED=1
+UMask=0077
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=default.target

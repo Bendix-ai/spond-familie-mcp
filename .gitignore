@@ -1,0 +1,14 @@
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+dist/
+build/
+*.egg-info/
+.env
+# Aldri commit tokener, passfrase-hash eller eksporter:
+token.json
+oauth.json
+owner.json
+audit.jsonl
+Spond-eksport/

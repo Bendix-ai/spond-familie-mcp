@@ -1,0 +1,44 @@
+[project]
+name = "spond-familie-mcp"
+version = "0.1.0"
+description = "Koble Claude (Desktop, Code, claude.ai) til din egen Spond: oversikt, svar for barna og trenerverktøy. Uoffisiell."
+readme = "README.md"
+license = "GPL-3.0-or-later"
+license-files = ["LICENSE"]
+requires-python = ">=3.10"
+authors = [{ name = "Bjarne Bendixen" }]
+keywords = ["spond", "mcp", "claude", "model-context-protocol", "idrett", "barneidrett"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "Operating System :: MacOS",
+  "Operating System :: POSIX :: Linux",
+  "Natural Language :: Norwegian",
+]
+dependencies = [
+  "spond>=1.2.1,<1.3",
+  "mcp>=1.30,<2",
+  "openpyxl>=3.1",
+  "aiohttp>=3.9",
+  "uvicorn>=0.30",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "httpx>=0.27"]
+
+[project.scripts]
+spond-familie = "spond_familie.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/Bendix-ai/spond-familie-mcp"
+Issues = "https://github.com/Bendix-ai/spond-familie-mcp/issues"
+
+[build-system]
+requires = ["hatchling>=1.26"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/spond_familie"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src", "tests"]

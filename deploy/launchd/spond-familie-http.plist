@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  macOS: spond-familie som HTTP-tjeneste for fjerntilgang (claude.ai / mobil).
+  1. Bytt ut BRUKER og ADRESSE nedenfor.
+  2. cp deploy/launchd/spond-familie-http.plist ~/Library/LaunchAgents/
+  3. launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/spond-familie-http.plist
+  Se docs/fjerntilgang.md. Ingen hemmeligheter her: tjenesten bruker bare
+  tokenet fra `spond-familie login`, og nekter å starte med SPOND_PASSWORD satt.
+-->
+<plist version="1.0">
+<dict>
+  <key>Label</key><string>spond-familie-http</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/Users/BRUKER/.local/bin/spond-familie</string>
+    <string>serve-http</string>
+    <string>--port</string><string>8765</string>
+    <string>--public-url</string><string>https://ADRESSE</string>
+  </array>
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>SPOND_MCP_READONLY</key><string>1</string>
+    <key>PYTHONUNBUFFERED</key><string>1</string>
+  </dict>
+  <key>RunAtLoad</key><true/>
+  <key>KeepAlive</key><true/>
+  <key>ThrottleInterval</key><integer>30</integer>
+  <key>Umask</key><integer>63</integer>
+  <key>StandardErrorPath</key><string>/Users/BRUKER/Library/Logs/spond-familie.log</string>
+  <key>StandardOutPath</key><string>/Users/BRUKER/Library/Logs/spond-familie.log</string>
+</dict>
+</plist>
